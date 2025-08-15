@@ -1,0 +1,1 @@
+import{c as e,j as o}from"./client.js";function r(){return o.jsxs("div",{children:[o.jsx("h1",{children:"Popup"}),o.jsx("p",{children:"This is the popup for the Chrome extension."})]})}const t=document.getElementById("root");t&&e.createRoot(t).render(o.jsx(r,{}));

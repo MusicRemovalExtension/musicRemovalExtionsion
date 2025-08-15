@@ -1,0 +1,1 @@
+console.log("Background script loaded");chrome.runtime.onInstalled.addListener(()=>{console.log("Extension installed")});chrome.runtime.onMessage.addListener((e,s,o)=>{console.log("Message received:",e),o({status:"received"})});
