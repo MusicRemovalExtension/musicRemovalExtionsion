@@ -1,5 +1,9 @@
-import { AudioChunkContract, ProcessingResult } from "./audio-types";
-import { CaptureConfig, ProcessingConfig, SystemConfig } from "./config-types";
+import type { AudioChunkContract, ProcessingResult } from "./audio-types";
+import type {
+  CaptureConfig,
+  ProcessingConfig,
+  SystemConfig,
+} from "./config-types";
 
 /**
  * Base message structure for all inter-component communication
