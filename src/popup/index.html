@@ -1,12 +1,49 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Popup</title>
+    <title>Audio Capture</title>
+
+    <!-- TAILWIND CSS: Load from CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- POPUP STYLES: Custom CSS for the popup -->
+    <style>
+      /* POPUP SIZE: Fixed dimensions for consistent UI */
+      body {
+        width: 320px; /* Fixed width */
+        height: 400px; /* Fixed height */
+        margin: 0; /* No default margins */
+        overflow: hidden; /* Hide scrollbars */
+      }
+
+      /* AUDIO VISUALIZER: Simple audio level bar */
+      .audio-bar {
+        transition: width 0.1s ease-out; /* Smooth animation */
+      }
+
+      /* STATUS INDICATOR: Pulsing animation when active */
+      .pulse-active {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+    </style>
   </head>
-  <body>
+  <body class="bg-gray-50">
+    <!-- ROOT DIV: Where React app will mount -->
     <div id="root"></div>
-    <script type="module" src="./index.tsx"></script>
+
+    <!-- POPUP SCRIPT: Load the compiled React app -->
+    <script src="popup.js"></script>
   </body>
 </html>

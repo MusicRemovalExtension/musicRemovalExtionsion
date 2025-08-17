@@ -1,25 +1,46 @@
 {
-    "manifest_version": 3,
-    "name": "Speech-Only Audio",
-    "version": "0.1.0",
-    "description": "Removes music from browser audio, keeping speech clear.",
-    "permissions": ["tabCapture", "storage", "offscreen"],
-    "background": {
-      "service_worker": "background/index.ts",
-      "type": "module"
-    },
-    "action": {
-      "default_popup": "popup/index.html",
-      "default_icon": {
-        "16": "icons/icon16.png",
-        "48": "icons/icon48.png",
-        "128": "icons/icon128.png"
-      }
-    },
-    "icons": {
+  "manifest_version": 3,
+  "name": "Speech-Only Audio",
+  "version": "0.1.0",
+  "description": "Removes music from browser audio, keeping speech clear.",
+  "permissions": [
+    "tabCapture",
+    "storage",
+    "offscreen",
+    "activeTab",
+    "offscreen"
+  ],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background/index.ts",
+    "type": "module"
+  },
+  "offscreen": {
+    "url": "offscreen/index.html",
+    "reasons": ["AUDIO_PLAYBACK"],
+    "justification": "Audio processing for music cancellation"
+  },
+  "action": {
+    "default_popup": "popup/index.html",
+    "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
     }
-  }
-  
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self';"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["worklets/capture-processor.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

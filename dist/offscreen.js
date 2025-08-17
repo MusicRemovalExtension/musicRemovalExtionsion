@@ -1,1 +1,0 @@
-import{c as r,j as e}from"./client.js";function t(){return e.jsxs("div",{children:[e.jsx("h1",{children:"Offscreen Page"}),e.jsx("p",{children:"This is the offscreen page for the Chrome extension."})]})}const o=document.getElementById("root");o&&r.createRoot(o).render(e.jsx(t,{}));

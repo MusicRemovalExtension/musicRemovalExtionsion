@@ -50,3 +50,22 @@ export interface ProcessingResult {
   speechEnhancement?: number; // Amount of speech enhancement applied
   noiseReduction?: number; // Amount of noise reduction applied
 }
+
+export interface CaptureState {
+  isCapturing: boolean; // Are we currently capturing audio?
+  currentTabId?: number; // Which tab are we capturing from?
+  error?: string; // Any error message to display
+  chunksProcessed: number; // Total chunks processed so far
+  audioLevel: number; // Current audio level (0.0 to 1.0)
+  chunkRate: number; // Chunks being processed per second
+}
+
+// PERFORMANCE METRICS: Statistics about capture performance
+export interface PerformanceMetrics {
+  avgChunkInterval: number; // Average time between chunks (milliseconds)
+  targetChunkInterval: number; // Target time between chunks (42.67ms)
+  timingConsistency: number; // How consistent the timing is (0-100%)
+  totalChunks: number; // Total chunks processed
+  memoryUsage: number; // Memory usage in MB
+  cpuUsage: number; // CPU usage percentage
+}

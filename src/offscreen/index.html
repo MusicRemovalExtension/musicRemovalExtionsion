@@ -3,10 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Offscreen</title>
+    <title>Audio Processing Worker</title>
+
+    <!-- This HTML file creates a hidden document for audio processing -->
+    <!-- It's required because service workers can't use AudioContext -->
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="./index.tsx"></script>
+    <!-- VISUAL INDICATOR: Shows this document is running (hidden from user) -->
+    <h1
+      style="
+        font-family: Arial;
+        color: #666;
+        text-align: center;
+        margin-top: 50px;
+      "
+    >
+      🎵 Audio Processing Worker Active
+    </h1>
+
+    <div style="text-align: center; color: #888; margin-top: 20px">
+      <p>This document processes audio in the background.</p>
+      <p>Check the browser console for detailed logs.</p>
+      <div id="status">Initializing...</div>
+    </div>
+
+    <!-- LOAD THE JAVASCRIPT: This runs the audio processing logic -->
+    <script src="offscreen.js"></script>
   </body>
 </html>
