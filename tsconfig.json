@@ -6,6 +6,9 @@
   ],
   "compilerOptions": {
     "allowUnusedLabels": true,
-    "strictNullChecks": false
+    "strictNullChecks": false,
+    "noUnusedParameters": false,
+    "noUnusedLocals": false,
+    "noImplicitAny": false
   }
 }

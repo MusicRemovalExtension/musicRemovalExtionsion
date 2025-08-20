@@ -23,21 +23,54 @@ class TabCaptureManager {
     try {
       console.log(`🎯 Starting capture for tab ${tabId}...`);
 
-      // STEP 1: REQUEST TAB CAPTURE
-      // chrome.tabCapture.capture() asks Chrome to capture tab audio
-      // Returns a MediaStream containing the audio data
-      const stream: any = await chrome.tabCapture.capture({
-        audio: true, // We want audio
-        video: false, // We don't want video
-      });
-
-      // CHECK IF CAPTURE FAILED
-      // Chrome returns null if capture fails (tab closed, no audio, permissions denied)
-      if (!stream) {
+      // CHECK IF TAB CAPTURE API IS AVAILABLE
+      if (!chrome.tabCapture) {
         throw new Error(
-          "Failed to capture tab audio - tab may be closed or have no audio"
+          "tabCapture API not available - check manifest permissions"
         );
       }
+
+      if (typeof chrome.tabCapture.capture !== "function") {
+        throw new Error(
+          "tabCapture.capture is not a function - API may not be properly loaded"
+        );
+      }
+
+      // STEP 1: REQUEST TAB CAPTURE
+      // Use Promise wrapper for the callback-based API
+      const stream = await new Promise<MediaStream>((resolve, reject) => {
+        chrome.tabCapture.capture(
+          {
+            audio: true, // We want audio
+            video: false, // We don't want video
+          },
+          (stream: MediaStream | null) => {
+            // Check for Chrome runtime errors
+            if (chrome.runtime.lastError) {
+              console.error("Chrome runtime error:", chrome.runtime.lastError);
+              reject(
+                new Error(
+                  chrome.runtime.lastError.message || "Unknown runtime error"
+                )
+              );
+              return;
+            }
+
+            // Check if capture failed
+            if (!stream) {
+              reject(
+                new Error(
+                  "Failed to capture tab audio - tab may be closed, have no audio, or permissions denied"
+                )
+              );
+              return;
+            }
+
+            console.log("Audio stream captured successfully");
+            resolve(stream);
+          }
+        );
+      });
 
       console.log(`✅ Tab capture successful:`, {
         streamId: stream.id, // Unique ID for this stream
@@ -74,9 +107,14 @@ class TabCaptureManager {
       if (!this.offscreenDocumentExists) {
         console.log("📄 Creating offscreen document...");
 
+        // Check if offscreen API is available
+        if (!chrome.offscreen) {
+          throw new Error("Offscreen API not available - requires Chrome 109+");
+        }
+
         await chrome.offscreen.createDocument({
           url: "offscreen.html", // HTML file for offscreen doc
-          reasons: ["AUDIO_PLAYBACK"], // Why we need it
+          reasons: [chrome.offscreen.Reason.AUDIO_PLAYBACK], // Use enum instead of string
           justification: "Process audio streams for real-time audio analysis",
         });
 
@@ -132,9 +170,13 @@ class TabCaptureManager {
 
     // STEP 3: NOTIFY OFFSCREEN TO STOP
     if (this.offscreenDocumentExists) {
-      chrome.runtime.sendMessage({
-        type: "STOP_AUDIO_PROCESSING",
-      });
+      try {
+        chrome.runtime.sendMessage({
+          type: "STOP_AUDIO_PROCESSING",
+        });
+      } catch (error) {
+        console.warn("Could not notify offscreen to stop:", error);
+      }
     }
 
     console.log("✅ Audio capture stopped");
@@ -148,6 +190,7 @@ class TabCaptureManager {
       isCapturing: this.currentStream !== null && this.currentStream.active,
       tabId: this.currentTabId,
       streamId: this.currentStream?.id || null,
+      apiAvailable: !!(chrome.tabCapture && chrome.tabCapture.capture),
     };
   }
 }
@@ -163,7 +206,7 @@ const tabCapture = new TabCaptureManager();
  * - STOP_CAPTURE: Stop current capture
  * - GET_STATUS: Get current capture status
  */
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   console.log("📨 Background received message:", message.type);
 
   // HANDLE START CAPTURE REQUEST
@@ -230,3 +273,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 console.log("🚀 Background script initialized");
+
+// DEBUG: Check API availability on startup
+console.log("🔍 API Check:", {
+  tabCapture: !!chrome.tabCapture,
+  capture: !!(chrome.tabCapture && chrome.tabCapture.capture),
+  offscreen: !!chrome.offscreen,
+});

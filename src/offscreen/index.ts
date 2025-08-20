@@ -22,8 +22,6 @@ class OffscreenAudioProcessor {
   // STATISTICS TRACKING
   private chunksReceived = 0; // Total chunks processed
   private startTime = 0; // When we started processing
-  private lastChunkTime = 0; // When we got the last chunk
-  private sequenceNumber = 0; // Chunk sequence counter
 
   /**
    * INITIALIZE AUDIO SYSTEM
@@ -235,7 +233,6 @@ class OffscreenAudioProcessor {
     // UPDATE COUNTERS
     this.chunksReceived++;
     const now = performance.now();
-    this.lastChunkTime = now;
 
     // VALIDATE CHUNK FORMAT
     const isValid = this.validateChunkContract(chunk);
@@ -497,6 +494,8 @@ const processor = new OffscreenAudioProcessor();
  * - STOP_AUDIO_PROCESSING: Stop processing and cleanup
  */
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  console.log("Sender:" + sender);
+
   console.log("📨 Offscreen received message:", message.type);
 
   // HANDLE START PROCESSING
